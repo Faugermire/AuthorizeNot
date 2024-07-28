@@ -1,55 +1,35 @@
 language: python
 
-dist: trusty
+dist: jammy
 
 sudo: false
 env:
   - TEST_SUITE=samples
   - TEST_SUITE=coverage
 python:
-  - "2.7"
-  - "3.4"
-  - "3.5"
-  - "3.6"
-  - "pypy"
-  - "pypy3"
-  
-matrix:
-  fast_finish: true
-  allow_failures:
-    - python: 3.7
-      dist: xenial
-      sudo: true
-    - python: 3.8
-      dist: xenial
-      sudo: true
-    - python: "pypy"
-    - python: "pypy3"
-    - python: "3.4"
-      # pypy will just crash due to an incompatibility with lxml.
-      # Newer versions of pypy seem to crash also, so we probably have to fix with a newer version of lxml
+  - "3.12"
 
 before_install:
-  # execute all of the commands which need to be executed 
+  skip
+  # execute all the commands which need to be executed
   # before installing dependencies
-  
+
 install:
-  # install all of the dependencies we need here
-  - pip install nose==1.*
-  - pip install pyxb==1.2.5
+  # install all the dependencies we need here
+  - pip install pyxb-x==1.2.6
     # can't change the pyxb version without changing the version in setup.py
     # and regenerating the bindings in apicontractsv1.py
   - pip install lxml==4.*
   - pip install requests==2.*
-  - if [[ "$TEST_SUITE" == "coverage" ]]; then pip install coveralls; fi
+  - if [[ "$TEST_SUITE" == "coverage" ]]; then pip install coverage; fi
 
 before_script:
-  # execute all of the commands which need to be executed 
+  # execute all the commands which need to be executed
   # before running actual tests
   - if [[ "$TEST_SUITE" == "samples" ]]; then git submodule update --remote --recursive; fi
 
 script:
-  # execute all of the tests or other commands to determine
+  # execute all the tests or other commands to determine
   # whether the build will pass or fail
-  - if [[ "$TEST_SUITE" == "coverage" ]]; then nosetests --with-coverage -cover-package=authorizenet; coveralls; fi
+  - if [[ "$TEST_SUITE" == "coverage" ]]; then coverage run -m unittest discover; coverage report; fi
   - if [[ "$TEST_SUITE" == "samples" ]]; then python setup.py install; cd sample-code-python; python ./test-runner.py; fi

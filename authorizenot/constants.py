@@ -7,7 +7,7 @@ Created on Jun 8, 2015
 import logging
 
 
-class Constants:
+class constants:
     """All the constants are defined here
     Define all your constants instead of using magic numbers in the
     code. 
