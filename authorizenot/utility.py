@@ -38,7 +38,7 @@ class Helper:
             except Exception:
                 logger.warning("Parser could not be initialized")
 
-        if self.parser is not None:
+        if self.parser is not None and self.property_file_uri is not None:
             try:
                 files_successfully_read_in = self.parser.read(self.property_file_uri)
                 logger.debug(f'config files successfully read in: {files_successfully_read_in}')
