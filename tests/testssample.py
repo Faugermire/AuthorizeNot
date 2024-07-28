@@ -4,7 +4,7 @@ Created on Nov 16, 2015
 @author: krgupta
 @updated: William Hinz
 """
-from authorizenet.apicontrollers import *
+from authorizenot.apicontrollers import *
 from decimal import *
 import random
 import unittest

@@ -1,10 +1,10 @@
-from authorizenet.constants import constants
+from authorizenot.constants import Constants
 from decimal import *
 import logging
 import datetime
 import unittest
-from authorizenet import apicontractsv1
-from authorizenet.utility import Helper
+from authorizenot import apicontractsv1
+from authorizenot.utility import Helper
 
 
 class TestCreateTransactionUnitTest(unittest.TestCase):
@@ -23,18 +23,18 @@ class TestCreateTransactionUnitTest(unittest.TestCase):
         self.__PyxbDeserialization()
                           
     def __PyxbDeserialization(self, last_element: bool = None):
-        logging_filename = self.helper.get_property(constants.propertiesloggingfilename)
-        logging_level = self.helper.get_property(constants.propertiesexecutionlogginglevel)
+        logging_filename = self.helper.get_property(Constants.propertiesloggingfilename)
+        logging_level = self.helper.get_property(Constants.propertiesexecutionlogginglevel)
         
         deserializedObject = None
         deserializedBadObject = None
         
         if logging_filename is None:
-            logging_filename = constants.defaultLogFileName
+            logging_filename = Constants.defaultLogFileName
         if logging_level is None:
-            logging_level = constants.defaultLoggingLevel
+            logging_level = Constants.defaultLoggingLevel
             
-        logging.basicConfig(filename=logging_filename, level=logging_level, format=constants.defaultlogformat)
+        logging.basicConfig(filename=logging_filename, level=logging_level, format=Constants.defaultlogformat)
           
         merchantAuth = apicontractsv1.merchantAuthenticationType()
         merchantAuth.name = "unknown"
@@ -61,9 +61,9 @@ class TestCreateTransactionUnitTest(unittest.TestCase):
         logging.debug("       : %s " % createtransactionrequest)
         
         try:    
-            xmlRequest = createtransactionrequest.toxml(encoding=constants.xml_encoding, element_name='createTransactionRequest')
-            xmlRequest = xmlRequest.replace(constants.nsNamespace1, '')
-            xmlRequest = xmlRequest.replace(constants.nsNamespace2, '')   
+            xmlRequest = createtransactionrequest.toxml(encoding=Constants.xml_encoding, element_name='createTransactionRequest')
+            xmlRequest = xmlRequest.replace(Constants.nsNamespace1, '')
+            xmlRequest = xmlRequest.replace(Constants.nsNamespace2, '')
             ##print ("xmlRequest %s " %xmlRequest)
             logging.debug( "Xml Request: %s" % xmlRequest)
         except Exception as ex:
@@ -83,9 +83,9 @@ class TestCreateTransactionUnitTest(unittest.TestCase):
                     ##print ("for good xml some error: objects are NOT equal" )
                     logging.debug( "createtransactionrequest object is NOT equal to deserializedObject") 
                     
-                deseriaziedObjectXmlRequest = deserializedObject.toxml(encoding=constants.xml_encoding, element_name='deserializedObject') 
-                deseriaziedObjectXmlRequest = deseriaziedObjectXmlRequest.replace(constants.nsNamespace1, '')
-                deseriaziedObjectXmlRequest = deseriaziedObjectXmlRequest.replace(constants.nsNamespace2, '')
+                deseriaziedObjectXmlRequest = deserializedObject.toxml(encoding=Constants.xml_encoding, element_name='deserializedObject')
+                deseriaziedObjectXmlRequest = deseriaziedObjectXmlRequest.replace(Constants.nsNamespace1, '')
+                deseriaziedObjectXmlRequest = deseriaziedObjectXmlRequest.replace(Constants.nsNamespace2, '')
                 logging.debug( "Good Dom Request: %s " % deseriaziedObjectXmlRequest ) 
                 ##print ( "Good De-serialized XML: %s \n" % deseriaziedObjectXmlRequest )
             except Exception as ex:
@@ -116,9 +116,9 @@ class TestCreateTransactionUnitTest(unittest.TestCase):
             try:     
                 deserializedBadObject = apicontractsv1.CreateFromDocument(badXmlRequest)           
                 self.assertIsNotNone(deserializedBadObject, "Null deserializedObject ")
-                badDomXml = deserializedBadObject.toxml(encoding=constants.xml_encoding, element_name='deserializedBadObject') 
-                badDomXml = badDomXml.replace(constants.nsNamespace1, '')
-                badDomXml = badDomXml.replace(constants.nsNamespace2, '')
+                badDomXml = deserializedBadObject.toxml(encoding=Constants.xml_encoding, element_name='deserializedBadObject')
+                badDomXml = badDomXml.replace(Constants.nsNamespace1, '')
+                badDomXml = badDomXml.replace(Constants.nsNamespace2, '')
                 logging.debug( "Bad Dom Request: %s " % badDomXml ) 
                 ##print ("Bad Dom De-serialized: %s \n" %badDomXml)
             except Exception as ex:
@@ -133,9 +133,9 @@ class TestCustomerProfile(unittest.TestCase):
         cls.helper = Helper('anet_python_sdk_properties.ini')
 
     def testGetCustomerProfile(self):    
-        logging_filename = self.helper.get_property(constants.propertiesloggingfilename)
-        logging_level = self.helper.get_property(constants.propertiesexecutionlogginglevel)
-        logging.basicConfig(filename=logging_filename, level=logging_level, format=constants.defaultlogformat)
+        logging_filename = self.helper.get_property(Constants.propertiesloggingfilename)
+        logging_level = self.helper.get_property(Constants.propertiesexecutionlogginglevel)
+        logging.basicConfig(filename=logging_filename, level=logging_level, format=Constants.defaultlogformat)
           
         merchantAuth = apicontractsv1.merchantAuthenticationType()
         merchantAuth.name = "unknown"
@@ -151,9 +151,9 @@ class TestCustomerProfile(unittest.TestCase):
         
         try:    
             '''serialzing object to XML '''
-            xmlRequest = getCustomerProfileRequest.toxml(encoding=constants.xml_encoding, element_name='getCustomerProfileRequest') 
-            xmlRequest = xmlRequest.replace(constants.nsNamespace1, b'')
-            xmlRequest = xmlRequest.replace(constants.nsNamespace2, b'')
+            xmlRequest = getCustomerProfileRequest.toxml(encoding=Constants.xml_encoding, element_name='getCustomerProfileRequest')
+            xmlRequest = xmlRequest.replace(Constants.nsNamespace1, b'')
+            xmlRequest = xmlRequest.replace(Constants.nsNamespace2, b'')
             logging.debug( "Xml Request: %s" % xmlRequest)
             #print( "Xml Request: %s" % xmlRequest)
         except Exception as ex:
@@ -172,9 +172,9 @@ class TestCustomerProfile(unittest.TestCase):
                 #print ("some error: objects are NOT equal" )
                 logging.debug( "createtransactionrequest object is NOT equal to deserializedObject") 
             
-            deseriaziedObjectXmlRequest = deserializedObject.toxml(encoding=constants.xml_encoding, element_name='deserializedObject') 
-            deseriaziedObjectXmlRequest = deseriaziedObjectXmlRequest.replace(constants.nsNamespace1, '')
-            deseriaziedObjectXmlRequest = deseriaziedObjectXmlRequest.replace(constants.nsNamespace2, '')
+            deseriaziedObjectXmlRequest = deserializedObject.toxml(encoding=Constants.xml_encoding, element_name='deserializedObject')
+            deseriaziedObjectXmlRequest = deseriaziedObjectXmlRequest.replace(Constants.nsNamespace1, '')
+            deseriaziedObjectXmlRequest = deseriaziedObjectXmlRequest.replace(Constants.nsNamespace2, '')
             logging.debug( "Good Dom Request: %s " % deseriaziedObjectXmlRequest )
             #print( "Good Dom Request: %s " % deseriaziedObjectXmlRequest )
             #print("de-serialized successfully. GOOD CASE COMPLETE  \n ")
@@ -193,9 +193,9 @@ class TestCustomerProfile(unittest.TestCase):
             self.assertIsNotNone(DEserializedNEWObject, "Null deserializedObject ")
             
             
-            DEseriaziedNEWObjectXmlRequest = DEserializedNEWObject.toxml(encoding=constants.xml_encoding, element_name='deserializedObject') 
-            DEseriaziedNEWObjectXmlRequest = DEseriaziedNEWObjectXmlRequest.replace(constants.nsNamespace1, '')
-            DEseriaziedNEWObjectXmlRequest = DEseriaziedNEWObjectXmlRequest.replace(constants.nsNamespace2, '')
+            DEseriaziedNEWObjectXmlRequest = DEserializedNEWObject.toxml(encoding=Constants.xml_encoding, element_name='deserializedObject')
+            DEseriaziedNEWObjectXmlRequest = DEseriaziedNEWObjectXmlRequest.replace(Constants.nsNamespace1, '')
+            DEseriaziedNEWObjectXmlRequest = DEseriaziedNEWObjectXmlRequest.replace(Constants.nsNamespace2, '')
             logging.debug( "Good Dom Request: %s " % DEseriaziedNEWObjectXmlRequest )
             #print( " DEseriaziedNEWObjectXmlRequest Request: %s " % DEseriaziedNEWObjectXmlRequest )
             #print("de-serialized successfully")
@@ -211,9 +211,9 @@ class TestCustomerProfile(unittest.TestCase):
             #print ("newxmlATLAst: %s" %newxmlATLAst)
             DEserializedNEWObject = apicontractsv1.CreateFromDocument(newxmlATLAst)           
             self.assertIsNotNone(DEserializedNEWObject, "Null deserializedObject ")
-            DEseriaziedNEWObjectXmlRequest = DEserializedNEWObject.toxml(encoding=constants.xml_encoding, element_name='deserializedObject') 
-            DEseriaziedNEWObjectXmlRequest = DEseriaziedNEWObjectXmlRequest.replace(constants.nsNamespace1, '')
-            DEseriaziedNEWObjectXmlRequest = DEseriaziedNEWObjectXmlRequest.replace(constants.nsNamespace2, '')
+            DEseriaziedNEWObjectXmlRequest = DEserializedNEWObject.toxml(encoding=Constants.xml_encoding, element_name='deserializedObject')
+            DEseriaziedNEWObjectXmlRequest = DEseriaziedNEWObjectXmlRequest.replace(Constants.nsNamespace1, '')
+            DEseriaziedNEWObjectXmlRequest = DEseriaziedNEWObjectXmlRequest.replace(Constants.nsNamespace2, '')
             logging.debug( "Good Dom Request: %s " % DEseriaziedNEWObjectXmlRequest )
             #print( " DEseriaziedNEWATLASTObjectXmlRequest Request: %s " % DEseriaziedNEWObjectXmlRequest )
             #print("de-serialized successfully")

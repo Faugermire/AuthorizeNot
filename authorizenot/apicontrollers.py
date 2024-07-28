@@ -2,14 +2,16 @@
 Created on Nov 15, 2017
 
 @author: krgupta
+@updated: William Hinz
 '''
 import logging
-from authorizenet.constants import constants
-from authorizenet import apicontractsv1
-from authorizenet import apicontrollersbase   
+from authorizenot.constants import Constants
+from authorizenot import apicontractsv1
+from authorizenot import apicontrollersbase
 
-anetLogger = logging.getLogger(constants.defaultLoggerName)
- 
+anetLogger = logging.getLogger(Constants.defaultLoggerName)
+
+
 class ARBCancelSubscriptionController(apicontrollersbase.APIOperationBase):
     
     def __init__(self, apirequest):
@@ -116,12 +118,12 @@ class ARBGetSubscriptionStatusController(apicontrollersbase.APIOperationBase):
     
     def afterexecute(self):
         response = self._httpResponse
-        if constants.note in response:
-            response = response.replace(constants.note, '')
+        if Constants.note in response:
+            response = response.replace(Constants.note, '')
 
-        if constants.StatusStart in response:
-            start = response.index(constants.StatusStart)
-            end = response.index(constants.StatusEnd)
+        if Constants.StatusStart in response:
+            start = response.index(Constants.StatusStart)
+            end = response.index(Constants.StatusEnd)
             response = response.replace(response[start:end+9], '')
 
         self._httpResponse = response

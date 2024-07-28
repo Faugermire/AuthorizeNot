@@ -9,8 +9,8 @@ import datetime
 from decimal import *
 import random
 
-from authorizenet import apicontractsv1
-from authorizenet.utility import Helper
+from authorizenot import apicontractsv1
+from authorizenot.utility import Helper
 
 
 class ApiTestBase(unittest.TestCase):

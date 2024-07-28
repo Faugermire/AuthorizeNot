@@ -1,11 +1,13 @@
-'''
+"""
 Created on Jun 8, 2015
 
 @author: egodolja
-'''
+@updated: William Hinz
+"""
 import logging
 
-class constants(object):
+
+class Constants:
     """All the constants are defined here
     Define all your constants instead of using magic numbers in the
     code. 
@@ -62,5 +64,6 @@ class constants(object):
     propertiesexecutionlogginglevel = "executionlogginglevel"
 
     defaultLoggerName = "authorizenet.sdk"
-    
+
+
 '''eof'''

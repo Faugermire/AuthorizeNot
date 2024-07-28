@@ -1,9 +1,9 @@
-'''
+"""
 Created on Nov 4, 2015
 
 @author: krgupta
 @updated: William Hinz
-'''
+"""
 
 from configparser import ConfigParser, Error as ConfigParserError
 

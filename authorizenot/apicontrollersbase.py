@@ -2,6 +2,7 @@
 Created on Nov 1, 2015
 
 @author: krgupta
+@updated: William Hinz
 '''
 import abc
 import logging
@@ -10,9 +11,9 @@ import xml.dom.minidom
 import requests
 from lxml import objectify
 
-from authorizenet.constants import constants
-from authorizenet import apicontractsv1
-from authorizenet.utility import Helper
+from authorizenot.constants import Constants
+from authorizenot import apicontractsv1
+from authorizenot.utility import Helper
 
 '''
 from authorizenet.apicontractsv1 import merchantAuthenticationType
@@ -20,7 +21,7 @@ from authorizenet.apicontractsv1 import ANetApiRequest
 from authorizenet.apicontractsv1 import ANetApiResponse
 '''
 
-anetLogger = logging.getLogger(constants.defaultLoggerName)
+anetLogger = logging.getLogger(Constants.defaultLoggerName)
 anetLogger.addHandler(logging.NullHandler())
 logging.getLogger('pyxb.binding.content').addHandler(logging.NullHandler())
 
@@ -96,7 +97,7 @@ class APIOperationBase(APIOperationBaseInterface, abc.ABC):
             raise ValueError('Input request cannot be null')
 
         self._request = api_request
-        APIOperationBase.__environment = constants.SANDBOX
+        APIOperationBase.__environment = Constants.SANDBOX
         APIOperationBase.__merchantauthentication = apicontractsv1.merchantAuthenticationType()
         self.validate()
 
@@ -110,7 +111,7 @@ class APIOperationBase(APIOperationBaseInterface, abc.ABC):
         self.validaterequest()
 
     def setClientId(self):
-        self._request.clientId = constants.clientId
+        self._request.clientId = Constants.clientId
 
     def _getrequest(self):
         return self._request 
@@ -118,10 +119,10 @@ class APIOperationBase(APIOperationBaseInterface, abc.ABC):
     def buildrequest(self):
         anetLogger.debug('building request..')
         
-        xmlRequest = self._request.toxml(encoding=constants.xml_encoding, element_name=self.getrequesttype())
+        xmlRequest = self._request.toxml(encoding=Constants.xml_encoding, element_name=self.getrequesttype())
         #remove namespaces that toxml() generates
-        xmlRequest = xmlRequest.replace(constants.nsNamespace1, b'')
-        xmlRequest = xmlRequest.replace(constants.nsNamespace2, b'')
+        xmlRequest = xmlRequest.replace(Constants.nsNamespace1, b'')
+        xmlRequest = xmlRequest.replace(Constants.nsNamespace2, b'')
 
         return xmlRequest
     
@@ -143,22 +144,22 @@ class APIOperationBase(APIOperationBaseInterface, abc.ABC):
         try:
             self.setClientId()
             xmlRequest = self.buildrequest()
-            self._httpResponse = requests.post(self.__environment, data=xmlRequest, headers=constants.headers, proxies=proxy_dictionary)
+            self._httpResponse = requests.post(self.__environment, data=xmlRequest, headers=Constants.headers, proxies=proxy_dictionary)
         except Exception as httpException:
             anetLogger.error('Error retrieving http response from: %s for request: %s', self.__environment, self.getprettyxmlrequest())
             anetLogger.error('Exception: %s, %s', type(httpException), httpException.args)
 
         if self._httpResponse:
-            self._httpResponse.encoding = constants.response_encoding
+            self._httpResponse.encoding = Constants.response_encoding
             self._httpResponse = self._httpResponse.text[3:]  # strip BOM
             self.afterexecute()
 
             try:
                 self._response = apicontractsv1.CreateFromDocument(self._httpResponse) 
                 # objectify code
-                xmlResponse = self._response.toxml(encoding=constants.xml_encoding, element_name=self.getrequesttype())
-                xmlResponse = xmlResponse.replace(constants.nsNamespace1, b'')
-                xmlResponse = xmlResponse.replace(constants.nsNamespace2, b'') 
+                xmlResponse = self._response.toxml(encoding=Constants.xml_encoding, element_name=self.getrequesttype())
+                xmlResponse = xmlResponse.replace(Constants.nsNamespace1, b'')
+                xmlResponse = xmlResponse.replace(Constants.nsNamespace2, b'')
                 self._mainObject = objectify.fromstring(xmlResponse)
             except Exception as objectifyexception:
                 anetLogger.error( 'Create Document Exception: %s, %s', type(objectifyexception), objectifyexception.args )
