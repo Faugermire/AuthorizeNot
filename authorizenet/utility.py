@@ -2,72 +2,57 @@
 Created on Nov 4, 2015
 
 @author: krgupta
+@updated: William Hinz
 '''
 
-try:
-    from ConfigParser import SafeConfigParser
-    from ConfigParser import NoSectionError
-except ImportError:
-    from configparser import SafeConfigParser
-    from configparser import NoSectionError
+from configparser import ConfigParser, Error as ConfigParserError
 
 import os
-import sys
 import logging
-#from __future__ import print_function
+import pathlib
 
 logger = logging.getLogger(__name__)
 
-class helper(): 
-    __parser = "null"
-    __propertyfilename = "null"
-    __initialized = False
-    
-    @staticmethod
-    def getparser():
-        return helper.__parser
-    
-    @staticmethod
-    def getpropertyfile():
-        return helper.__propertyfilename
+ROOT_DIR = pathlib.Path(__file__).parent.parent  # Should point to the root of the project!
 
-    @staticmethod
-    def setpropertyfile(propertyfilename):
-        if (propertyfilename == 'null' or os.path.isfile(propertyfilename) == False):
-            helper.__propertyfilename = 'null' 
-        else:     
-            helper.__propertyfilename = propertyfilename
-        return
 
-    @staticmethod
-    def __classinitialized():
-        return helper.__initialized
-    
-    @staticmethod
-    def getproperty(propertyname):
-        stringvalue = "null"
+class Helper:
 
-        if ('null' != helper.getpropertyfile()):
-            if (False == helper.__classinitialized()):
-                if ('null' == helper.getparser()):
-                    try:
-                        helper.__parser = SafeConfigParser({"http":"","https":"","ftp":""})
-                    except:
-                        logger.debug("Parser could not be initialized")
+    def __init__(self, property_filename: str):
+        self.property_filename = property_filename
+        self.property_file_uri = None
+        self.parser = None
+        self.set_property_file(self.property_filename)
+        self.create_parser()
 
-                if ('null' != helper.getparser()):
-                    try:
-                        helper.getparser().read(helper.__propertyfilename)
-                        helper.__initialized = True
-                    except:
-                        logger.debug("Unable to load the property file")
+    def set_property_file(self, property_filename: str):
+        if property_filename is not None:
+            temp_file_uri = pathlib.Path(ROOT_DIR, property_filename)
+            if temp_file_uri.is_file():
+                self.property_file_uri = temp_file_uri
 
-        if (True == helper.__classinitialized()):
+    def create_parser(self):
+        if self.parser is None:
             try:
-                stringvalue = helper.getparser().get("properties", propertyname)
-            except:
-                logger.debug("'%s' not found\n" %propertyname )
-                
-        if ( "null" == stringvalue):
-            stringvalue = os.getenv(propertyname)               
-        return stringvalue 
+                self.parser = ConfigParser({"http": "", "https": "", "ftp": ""})
+            except ConfigParserError:
+                logger.warning("Parser could not be initialized")
+
+        if self.parser is not None:
+            try:
+                files_successfully_read_in = self.parser.read(self.property_filename)
+                logger.debug(f'config files successfully read in: {files_successfully_read_in}')
+            except ConfigParserError:
+                logger.warning("Unable to load the property file")
+
+    def get_property(self, property_name):
+        string_value = None
+        if self.property_file_uri is not None and self.parser is not None:
+            try:
+                string_value = self.parser.get("properties", property_name)
+            except ConfigParserError:
+                logger.debug(f"{property_name} not found\n")
+
+        if string_value is None:
+            string_value = os.getenv(property_name)
+        return string_value

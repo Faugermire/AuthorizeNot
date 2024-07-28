@@ -1,28 +1,25 @@
-'''
+"""
 Created on Nov 16, 2015
 
 @author: krgupta
-'''
-from authorizenet import apicontractsv1
-from authorizenet.constants import constants
-from authorizenet.apicontractsv1 import CTD_ANON
+@updated: William Hinz
+"""
 from authorizenet.apicontrollers import *
 from decimal import *
 import random
-import datetime
 import unittest
-import sys
 from tests import apitestbase
-from authorizenet import utility
 
-class test_ReadProperty(apitestbase.ApiTestBase):
+
+class TestReadProperty(apitestbase.ApiTestBase):
+
     def testPropertyFromFile(self):
-        login= utility.helper.getproperty("api.login.id")
-        if (login) == None:
-            login= utility.helper.getproperty("api_login_id")
-        transactionkey = utility.helper.getproperty("transaction.key")
-        if (transactionkey) == None:
-            transactionkey= utility.helper.getproperty("transaction_key")
+        login = self.helper.get_property("api.login.id")
+        if login is None:
+            login = self.helper.get_property("api_login_id")
+        transactionkey = self.helper.get_property("transaction.key")
+        if transactionkey is None:
+            transactionkey = self.helper.get_property("transaction_key")
         self.assertIsNotNone(login)
         self.assertIsNotNone(transactionkey)
 
@@ -30,7 +27,7 @@ class test_TransactionReportingUnitTest(apitestbase.ApiTestBase):
     def testchargeCreditCard(self):
         creditCard = apicontractsv1.creditCardType()
         creditCard.cardNumber = "4111111111111111"
-        creditCard.expirationDate = "2020-12"
+        creditCard.expirationDate = "2100-12"
         payment = apicontractsv1.paymentType()
         payment.creditCard = creditCard
         transactionrequest = apicontractsv1.transactionRequestType()
@@ -46,7 +43,7 @@ class test_TransactionReportingUnitTest(apitestbase.ApiTestBase):
         response = createtransactioncontroller.getresponse()
         if hasattr(response, 'messages') == True:
             if hasattr(response.messages, 'resultCode') == True:
-                self.assertEquals('Ok', response.messages.resultCode)
+                self.assertEqual('Ok', response.messages.resultCode)
         if hasattr(response, 'transactionResponse') == True:
             if hasattr(response.transactionResponse, 'transId') == True:
                 createdTransactionId = response.transactionResponse.transId
@@ -62,7 +59,7 @@ class test_TransactionReportingUnitTest(apitestbase.ApiTestBase):
         response =  gettransactiondetailscontroller.getresponse()
         if hasattr(response, 'messages') == True:
             if hasattr(response.messages, 'resultCode') == True:
-                self.assertEquals('Ok', response.messages.resultCode)   
+                self.assertEqual('Ok', response.messages.resultCode)
      
 class test_RecurringBillingTest(apitestbase.ApiTestBase):
     def testCreateSubscription(self):
@@ -75,7 +72,7 @@ class test_RecurringBillingTest(apitestbase.ApiTestBase):
         response = arbcreatesubscriptioncontroller.getresponse()
         if hasattr(response, 'messages') == True:
             if hasattr(response.messages, 'resultCode') == True:
-                self.assertEquals('Ok', response.messages.resultCode)
+                self.assertEqual('Ok', response.messages.resultCode)
         if hasattr(response, 'subscriptionId') == True:
             createdSubscriptionId = response.subscriptionId
         return str(createdSubscriptionId)
@@ -84,26 +81,26 @@ class test_RecurringBillingTest(apitestbase.ApiTestBase):
         getSubscription = apicontractsv1.ARBGetSubscriptionRequest()
         getSubscription.merchantAuthentication = self.merchantAuthentication
         subscriptionID = self.testCreateSubscription()
-        getSubscription.subscriptionId = subscriptionID #update valid subscription id 
+        getSubscription.subscriptionId = subscriptionID #update valid subscription id
         getSubscriptionController = ARBGetSubscriptionController(getSubscription)
         getSubscriptionController.execute()
         response = getSubscriptionController.getresponse()
         if hasattr(response, 'messages') == True:
             if hasattr(response.messages, 'resultCode') == True:
-                self.assertEquals('Ok', response.messages.resultCode)
+                self.assertEqual('Ok', response.messages.resultCode)
        
     def testCancelSubscription(self):   
         cancelsubscriptionrequest = apicontractsv1.ARBCancelSubscriptionRequest()
         cancelsubscriptionrequest.merchantAuthentication = self.merchantAuthentication
         cancelsubscriptionrequest.refId = 'Sample'
         subscriptionID = self.testCreateSubscription()
-        cancelsubscriptionrequest.subscriptionId = subscriptionID #input valid subscriptionId
+        cancelsubscriptionrequest.subscriptionId = subscriptionID  # input valid subscriptionId
         cancelsubscriptioncontroller = ARBCancelSubscriptionController (cancelsubscriptionrequest)
         cancelsubscriptioncontroller.execute()  
         response = cancelsubscriptioncontroller.getresponse()
         if hasattr(response, 'messages') == True:
             if hasattr(response.messages, 'resultCode') == True:
-                self.assertEquals('Ok', response.messages.resultCode)
+                self.assertEqual('Ok', response.messages.resultCode)
    
 class test_paymentTransactionUnitTest(apitestbase.ApiTestBase): 
     def testAuthCaptureTransaction(self):  
@@ -123,7 +120,7 @@ class test_paymentTransactionUnitTest(apitestbase.ApiTestBase):
         response = createtransactioncontroller.getresponse()
         if hasattr(response, 'messages') == True:
             if hasattr(response.messages, 'resultCode') == True:
-                self.assertEquals('Ok', response.messages.resultCode)
+                self.assertEqual('Ok', response.messages.resultCode)
         if hasattr(response, 'transactionResponse') == True:
             self.assertIsNotNone(response.transactionResponse)
             if hasattr(response.transactionResponse, 'transId') == True:    
@@ -146,7 +143,7 @@ class test_paymentTransactionUnitTest(apitestbase.ApiTestBase):
         response = createtransactioncontroller.getresponse()
         if hasattr(response, 'messages') == True:
             if hasattr(response.messages, 'resultCode') == True:
-                self.assertEquals('Ok', response.messages.resultCode)
+                self.assertEqual('Ok', response.messages.resultCode)
         if hasattr(response, 'transactionResponse') == True:
             self.assertIsNotNone(response.transactionResponse)
             if hasattr(response.transactionResponse, 'transId') == True:    
@@ -167,7 +164,7 @@ class test_CustomerProfile(apitestbase.ApiTestBase):
         response = controller.getresponse()
         if hasattr(response, 'messages') == True:
             if hasattr(response.messages, 'resultCode') == True:
-                self.assertEquals('Ok', response.messages.resultCode)
+                self.assertEqual('Ok', response.messages.resultCode)
         if hasattr(response, 'customerProfileId') == True: 
             createdCustomerProfileID = response.customerProfileId
         return str(createdCustomerProfileID)
@@ -181,10 +178,10 @@ class test_CustomerProfile(apitestbase.ApiTestBase):
         controller = getCustomerProfileController(getCustomerProfile)
         controller.execute()
         response = controller.getresponse()
-        self.assertEquals('Ok', response.messages.resultCode)
+        self.assertEqual('Ok', response.messages.resultCode)
         if hasattr(response, 'messages') == True:
             if hasattr(response.messages, 'resultCode') == True:
-                self.assertEquals('Ok', response.messages.resultCode)
+                self.assertEqual('Ok', response.messages.resultCode)
 
     def testCreateAndGetCustomerShippingAddress(self):
         officeAddress = apicontractsv1.customerAddressType();
@@ -206,7 +203,7 @@ class test_CustomerProfile(apitestbase.ApiTestBase):
         response = controller.getresponse()
         if hasattr(response, 'messages') == True:
             if hasattr(response.messages, 'resultCode') == True:
-                self.assertEquals('Ok', response.messages.resultCode) 
+                self.assertEqual('Ok', response.messages.resultCode)
         if hasattr(response, 'customerAddressId') == True: 
             createdShippingAddressId = str(response.customerAddressId)
         #return str(createdShippingAddressId)
@@ -224,7 +221,7 @@ class test_CustomerProfile(apitestbase.ApiTestBase):
         response = getShippingAddressController.getresponse()
         if hasattr(response, 'messages') == True:
             if hasattr(response.messages, 'resultCode') == True:
-                self.assertEquals('Ok', response.messages.resultCode)  
+                self.assertEqual('Ok', response.messages.resultCode)
             
 '''    
 class test_ProductionURL(apitestbase.ApiTestBase):  
@@ -239,7 +236,7 @@ class test_ProductionURL(apitestbase.ApiTestBase):
         apicontrollersbase.APIOperationBase.setenvironment(customEndpoint)
         settledBatchListController.execute() 
         response = settledBatchListController.getresponse() 
-        self.assertEquals('Ok', response.messages.resultCode) 
+        self.assertEqual('Ok', response.messages.resultCode) 
     
     def testGetListofSubscriptions(self):    
         sorting = apicontractsv1.ARBGetSubscriptionListSorting()
@@ -259,7 +256,7 @@ class test_ProductionURL(apitestbase.ApiTestBase):
         apicontrollersbase.APIOperationBase.setenvironment(customEndpoint)
         arbgetsubscriptionlistcontroller.execute()
         response = arbgetsubscriptionlistcontroller.getresponse()
-        self.assertEquals('Ok', response.messages.resultCode) 
+        self.assertEqual('Ok', response.messages.resultCode) 
 '''        
 if __name__ =='__main__':
     unittest.main()  

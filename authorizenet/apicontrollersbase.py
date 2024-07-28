@@ -124,9 +124,9 @@ class APIOperationBase(APIOperationBaseInterface):
         
         self.beforeexecute()
         
-        proxyDictionary = {'http' : utility.helper.getproperty("http_proxy"),
-                           'https' : utility.helper.getproperty("https_proxy"),
-                           'ftp' : utility.helper.getproperty("ftp")}
+        proxyDictionary = {'http' : utility.Helper.get_property("http_proxy"),
+                           'https' : utility.Helper.get_property("https_proxy"),
+                           'ftp' : utility.Helper.get_property("ftp")}
                            
         #requests is http request  
         try:

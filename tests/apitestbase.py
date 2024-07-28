@@ -8,41 +8,28 @@ import unittest
 import datetime
 from decimal import *
 import random
-import test
 
-try:
-    from ConfigParser import SafeConfigParser
-except ImportError:
-    from configparser import SafeConfigParser
-    
-from authorizenet import apicontractsv1, apicontrollersbase
-from authorizenet.utility import *
-#from authorizenet.apicontractsv1 import CTD_ANON
-from authorizenet import utility
+from authorizenet import apicontractsv1
+from authorizenet.utility import Helper
+
 
 class ApiTestBase(unittest.TestCase):
 
     def setUp(self):
-        utility.helper.setpropertyfile('anet_python_sdk_properties.ini')
-        
+        self.helper = Helper('anet_python_sdk_properties.ini')
         self.amount = str(round(random.random()*100, 2))
-       
-        self.merchantAuthentication = apicontractsv1.merchantAuthenticationType()       
-        
-        self.merchantAuthentication.name = utility.helper.getproperty('api.login.id')
-        if self.merchantAuthentication.name == None:
-            self.merchantAuthentication.name = utility.helper.getproperty('api_login_id')
-        
-        self.merchantAuthentication.transactionKey = utility.helper.getproperty('transaction.key')
-        if self.merchantAuthentication.transactionKey == None:
-            self.merchantAuthentication.transactionKey = utility.helper.getproperty('transaction_key')
+        self.merchantAuthentication = apicontractsv1.merchantAuthenticationType()
+        self.merchantAuthentication.name = self.helper.get_property('api.login.id')
+
+        if self.merchantAuthentication.name is None:
+            self.merchantAuthentication.name = self.helper.get_property('api_login_id')
+        self.merchantAuthentication.transactionKey = self.helper.get_property('transaction.key')
+        if self.merchantAuthentication.transactionKey is None:
+            self.merchantAuthentication.transactionKey = self.helper.get_property('transaction_key')
         
         self.ref_id = 'Sample'
-        
         self.dateOne = datetime.date(2020, 8, 30)
-#        self.interval = CTD_ANON()
-#        self.interval.length = 1
-#        self.interval.unit = 'months'
+
         self.paymentScheduleOne = apicontractsv1.paymentScheduleType()
         self.paymentScheduleOne.interval = apicontractsv1.paymentScheduleTypeInterval()
         
@@ -55,7 +42,7 @@ class ApiTestBase(unittest.TestCase):
         
         self.creditCardOne = apicontractsv1.creditCardType()
         self.creditCardOne.cardNumber = "4111111111111111"
-        self.creditCardOne.expirationDate = "2020-12"
+        self.creditCardOne.expirationDate = "2040-12"
         
         self.payment = apicontractsv1.paymentType()
         self.payment.creditCard = self.creditCardOne

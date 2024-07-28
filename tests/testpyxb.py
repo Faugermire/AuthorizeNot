@@ -18,8 +18,8 @@ class test_CreateTransactionUnitTest(unittest.TestCase):
         self.__PyxbDeserialization()
                           
     def __PyxbDeserialization(self, lastElement = None):
-        loggingfilename = utility.helper.getproperty(constants.propertiesloggingfilename)
-        logginglevel = utility.helper.getproperty(constants.propertiesexecutionlogginglevel)
+        loggingfilename = utility.Helper.get_property(constants.propertiesloggingfilename)
+        logginglevel = utility.Helper.get_property(constants.propertiesexecutionlogginglevel)
         
         deserializedObject = None
         deserializedBadObject = None
@@ -122,8 +122,8 @@ class test_CreateTransactionUnitTest(unittest.TestCase):
                 
 class test_CustomerProfile(unittest.TestCase):                      
     def testGetCustomerProfile(self):    
-        loggingfilename = utility.helper.getproperty(constants.propertiesloggingfilename)
-        logginglevel = utility.helper.getproperty(constants.propertiesexecutionlogginglevel) 
+        loggingfilename = utility.Helper.get_property(constants.propertiesloggingfilename)
+        logginglevel = utility.Helper.get_property(constants.propertiesexecutionlogginglevel)
         logging.basicConfig(filename=loggingfilename, level=logginglevel, format=constants.defaultlogformat)
           
         merchantAuth = apicontractsv1.merchantAuthenticationType()

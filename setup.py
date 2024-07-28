@@ -19,7 +19,7 @@ setup(
     # https://packaging.python.org/en/latest/single_source_version.html
     version='1.1.4.1',
 
-    description='Authorize.Net Python SDK',
+    description='Authorize.Net Python SDK, But Not',
 
     # The project's main homepage.
     url='https://github.com/AuthorizeNet/sdk-python',
@@ -64,18 +64,13 @@ setup(
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=['pyxb-x==1.2.6.2', 'lxml==5.*', 'requests==2.*', 'setuptools==71.*'],
-    #install_requires=['nose'],
-    #install_requires=['nosetests'],
-    #install_requires=['mock'],
     #install_requires=['lxml'],
 
-    tests_require = ['nose==1.*', 'mock==2.*'],
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,
     # for example:
     # $ pip install -e .[dev,test]
     extras_require={
-        #'pip install mock'
         #'pip install lxml'
         #'dev': ['check-manifest'],
         #'test': ['coverage'],

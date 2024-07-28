@@ -7,7 +7,7 @@ Created on Jul 1, 2015
 '''
 import unittest
 
-from mock import MagicMock
+from unittest.mock import MagicMock
 from authorizenet import apicontractsv1
 #from controller.ARBCancelSubscriptionController import ARBCancelSubscriptionController
 from tests import apitestbase
