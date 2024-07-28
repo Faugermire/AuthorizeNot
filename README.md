@@ -1,5 +1,33 @@
 # AuthorizeNot
-This is a fork of the horrifically unmaintained Authorize.Net Python package. The modifications made are simply to get it working on modern versions of Python.
+This package is a fork of the horrifically unmaintained Authorize.Net Python package. Fed up with waiting for the day that never comes, I decided to take things into my own hands.
+The modifications I have made are simply to get it working on modern versions of Python. There are no new features or functionality compared to the original package.
+Below are the improvements I have made:
+1. The unmaintained PyXB package has been replaced with PyXB-X 
+2. The massive apicontractsv1.py file has been completely regenerated using the new PyXB-X package and Python 3.12
+3. Massive refactoring efforts made with the unittests to get them working with the builtin `unittest` package instead of the deprecated `nosetest` package
+4. Updated gitignore to prevent many superfluous files from finding their way into your repo
+5. Updated the scripts to make regenerating the apicontractsv1.py a little easier
+
+## Testing
+This project's tests have been updated to simply use the builtin `unittest` instead of the deprecated `nosetest` package.
+Currently, all 15 original unit tests are passing.
+
+### Prerequisites
+Either:
+
+1. Create a file in the root of the directory named `anet_python_sdk_properties.ini`
+2. Copy the contents of its template file into it
+3. Replace the `api.login.id` and `transaction.key` variables with your keys
+
+OR
+
+1. Create environment variables `api.login.id` and `transaction.key`
+2. Set them to your keys
+
+### Running The Unit Tests
+Simply run `python -m unittest`. That's it.
+
+# Legacy AuthorizeNet README Below
 
 
 # Authorize.Net Python SDK
