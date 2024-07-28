@@ -166,3 +166,4 @@ anet_python_sdk_properties.ini
 controllerstemporary/
 AnetApiSchema.xsd.back
 AnetOut.xsd
+apicontrollers.new
