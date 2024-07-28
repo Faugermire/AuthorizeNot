@@ -99,11 +99,11 @@ class TestRecurringBillingTest(apitestbase.ApiTestBase):
         cancelsubscriptionrequest.refId = 'Sample'
         subscriptionID = self.testCreateSubscription()
         cancelsubscriptionrequest.subscriptionId = subscriptionID  # input valid subscriptionId
-        cancelsubscriptioncontroller = ARBCancelSubscriptionController (cancelsubscriptionrequest)
+        cancelsubscriptioncontroller = ARBCancelSubscriptionController(cancelsubscriptionrequest)
         cancelsubscriptioncontroller.execute()  
         response = cancelsubscriptioncontroller.getresponse()
-        if hasattr(response, 'messages') == True:
-            if hasattr(response.messages, 'resultCode') == True:
+        if hasattr(response, 'messages'):
+            if hasattr(response.messages, 'resultCode'):
                 self.assertEqual('Ok', response.messages.resultCode)
 
 

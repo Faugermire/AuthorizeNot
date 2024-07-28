@@ -28,7 +28,7 @@ class ApiTestBase(unittest.TestCase):
             self.merchantAuthentication.transactionKey = self.helper.get_property('transaction_key')
         
         self.ref_id = 'Sample'
-        self.dateOne = datetime.date(2020, 8, 30)
+        self.dateOne = datetime.datetime.now() + datetime.timedelta(days=1)  # Start date must not be before submission date.
 
         self.paymentScheduleOne = apicontractsv1.paymentScheduleType()
         self.paymentScheduleOne.interval = apicontractsv1.paymentScheduleTypeInterval()

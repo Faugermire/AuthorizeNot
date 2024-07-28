@@ -73,8 +73,13 @@ class APIOperationBaseInterface(abc.ABC):
 
 class APIOperationBase(APIOperationBaseInterface, abc.ABC):
 
-    merchant_authentication = None
-    endpoint = None
+    __merchantauthentication = 'null'
+    __environment = 'null'
+    __initialized = 'null'
+
+    @staticmethod
+    def __classinitialized():
+        return APIOperationBase.__initialized
 
     def __init__(self, api_request):
         super().__init__()
@@ -91,8 +96,8 @@ class APIOperationBase(APIOperationBaseInterface, abc.ABC):
             raise ValueError('Input request cannot be null')
 
         self._request = api_request
-        APIOperationBase.endpoint = constants.SANDBOX
-        APIOperationBase.merchant_authentication = apicontractsv1.merchantAuthenticationType()
+        APIOperationBase.__environment = constants.SANDBOX
+        APIOperationBase.__merchantauthentication = apicontractsv1.merchantAuthenticationType()
         self.validate()
 
     @abc.abstractmethod
@@ -128,7 +133,7 @@ class APIOperationBase(APIOperationBaseInterface, abc.ABC):
         return requestDom
     
     def execute(self):
-        anetLogger.debug('Executing http post to url: %s', self.endpoint)
+        anetLogger.debug('Executing http post to url: %s', self.__environment)
         self.beforeexecute()
         proxy_dictionary = {'http': self.helper.get_property("http_proxy"),
                             'https': self.helper.get_property("https_proxy"),
@@ -138,9 +143,9 @@ class APIOperationBase(APIOperationBaseInterface, abc.ABC):
         try:
             self.setClientId()
             xmlRequest = self.buildrequest()
-            self._httpResponse = requests.post(self.endpoint, data=xmlRequest, headers=constants.headers, proxies=proxy_dictionary)
+            self._httpResponse = requests.post(self.__environment, data=xmlRequest, headers=constants.headers, proxies=proxy_dictionary)
         except Exception as httpException:
-            anetLogger.error('Error retrieving http response from: %s for request: %s', self.endpoint, self.getprettyxmlrequest())
+            anetLogger.error('Error retrieving http response from: %s for request: %s', self.__environment, self.getprettyxmlrequest())
             anetLogger.error('Exception: %s, %s', type(httpException), httpException.args)
 
         if self._httpResponse:
@@ -178,13 +183,13 @@ class APIOperationBase(APIOperationBaseInterface, abc.ABC):
         return self._mainObject  # objectify object
     
     def getresultcode(self):
-        resultcode = None
+        resultcode = 'null'
         if self._response:
             resultcode = self._response.resultCode
         return resultcode
     
     def getmessagetype(self):
-        message = None
+        message = 'null'
         if self._response:
             message = self._response.message
         return message
@@ -196,24 +201,24 @@ class APIOperationBase(APIOperationBaseInterface, abc.ABC):
         pass
 
     def getmerchantauthentication(self):
-        return self.merchant_authentication
+        return self.__merchantauthentication
     
     @staticmethod
     def setmerchantauthentication(merchant_authentication):
-        APIOperationBase.merchant_authentication = merchant_authentication
+        APIOperationBase.__merchantauthentication = merchant_authentication
 
     def validateandsetmerchantauthentication(self):
         anetapirequest = apicontractsv1.ANetApiRequest()
-        if anetapirequest.merchantAuthentication is None and self.getmerchantauthentication() is not None:
-            anetapirequest.merchantAuthentication = self.getmerchantauthentication()
-        else:
-            raise ValueError('Merchant Authentication can not be None')
+        if anetapirequest.merchantAuthentication == 'null':
+            if self.getmerchantauthentication() != 'null':
+                anetapirequest.merchantAuthentication = self.getmerchantauthentication()
+            else:
+                raise ValueError('Merchant Authentication can not be None')
 
     @staticmethod
     def getenvironment():
-        return APIOperationBase.endpoint
+        return APIOperationBase.__environment
 
     @staticmethod
     def setenvironment(userenvironment):
-        APIOperationBase.endpoint = userenvironment
-        return
+        APIOperationBase.__environment = userenvironment
