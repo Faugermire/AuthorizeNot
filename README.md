@@ -1,4 +1,8 @@
-# Authorize.Net Python SDK 
+# AuthorizeNot
+This is a fork of the horrifically unmaintained Authorize.Net Python package. The modifications made are simply to get it working on modern versions of Python.
+
+
+# Authorize.Net Python SDK
 
 [![Travis CI Status](https://travis-ci.org/AuthorizeNet/sdk-python.svg?branch=master)](https://travis-ci.org/AuthorizeNet/sdk-python)
 [![Coverage Status](https://coveralls.io/repos/github/AuthorizeNet/sdk-python/badge.svg?branch=master)](https://coveralls.io/github/AuthorizeNet/sdk-python?branch=master)
