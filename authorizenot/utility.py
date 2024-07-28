@@ -5,7 +5,7 @@ Created on Nov 4, 2015
 @updated: William Hinz
 """
 
-from configparser import ConfigParser, Error as ConfigParserError
+from configparser import ConfigParser
 
 import os
 import logging
@@ -35,14 +35,14 @@ class Helper:
         if self.parser is None:
             try:
                 self.parser = ConfigParser({"http": "", "https": "", "ftp": ""})
-            except ConfigParserError:
+            except Exception:
                 logger.warning("Parser could not be initialized")
 
         if self.parser is not None:
             try:
                 files_successfully_read_in = self.parser.read(self.property_file_uri)
                 logger.debug(f'config files successfully read in: {files_successfully_read_in}')
-            except ConfigParserError:
+            except Exception:
                 logger.warning("Unable to load the property file")
 
     def get_property(self, property_name):
@@ -50,7 +50,7 @@ class Helper:
         if self.property_file_uri is not None and self.parser is not None:
             try:
                 string_value = self.parser.get("properties", property_name)
-            except ConfigParserError:
+            except Exception:
                 logger.debug(f"{property_name} not found\n")
 
         if string_value is None:
