@@ -16,7 +16,7 @@ class constants(object):
     PRODUCTION = 'https://api2.authorize.net/xml/v1/request.api'
 
     '''clientId'''
-    version = '1.1.4'
+    version = '1.1.4.1'
     clientId = 'sdk-python-' + version
 
     '''xml encoding'''
