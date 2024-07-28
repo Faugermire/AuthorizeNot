@@ -2,11 +2,12 @@
 Created on Nov 3, 2015
 
 @author: krgupta
+@updated: William Hinz
 '''
 import logging
-from authorizenet.constants import constants
-from authorizenet import apicontractsv1
-from authorizenet import apicontrollersbase    
+from authorizenot.constants import Constants
+from authorizenot import apicontractsv1
+from authorizenot import apicontrollersbase
 anetLogger = logging.getLogger(constants.defaultLoggerName)
 class ARBCancelSubscriptionController(apicontrollersbase.APIOperationBase):
     
