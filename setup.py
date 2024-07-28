@@ -12,12 +12,12 @@ here = path.abspath(path.dirname(__file__))
 
 
 setup(
-    name='authorizenet',
+    name='authorizenot',
 
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='1.1.4',
+    version='1.1.4.1',
 
     description='Authorize.Net Python SDK',
 
@@ -48,12 +48,12 @@ setup(
 
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.4'
+        'Programming Language :: Python :: 3.12'
+
     ],
 
     # What does your project relate to?
-    keywords='authorizenet, authorize.net, payment, ecommerce',
+    keywords='authorizenot, authorizenet, authorize.net, payment, ecommerce',
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
@@ -63,7 +63,7 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['pyxb==1.2.5', 'lxml==4.*', 'requests==2.*'],
+    install_requires=['pyxb-x==1.2.6.2', 'lxml==5.*', 'requests==2.*', 'setuptools==71.*'],
     #install_requires=['nose'],
     #install_requires=['nosetests'],
     #install_requires=['mock'],
