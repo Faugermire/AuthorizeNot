@@ -3,11 +3,16 @@ from decimal import *
 import logging
 import datetime
 import unittest
-from authorizenet import utility
-import xml.dom.minidom
 from authorizenet import apicontractsv1
+from authorizenet.utility import Helper
 
-class test_CreateTransactionUnitTest(unittest.TestCase):    
+
+class TestCreateTransactionUnitTest(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.helper = Helper('anet_python_sdk_properties.ini')
+
     def testPyxbDeserializationElementAtMid(self):
         self.__PyxbDeserialization(False)
       
@@ -17,19 +22,19 @@ class test_CreateTransactionUnitTest(unittest.TestCase):
     def testPyxbDeserializationGoodXML(self):
         self.__PyxbDeserialization()
                           
-    def __PyxbDeserialization(self, lastElement = None):
-        loggingfilename = utility.Helper.get_property(constants.propertiesloggingfilename)
-        logginglevel = utility.Helper.get_property(constants.propertiesexecutionlogginglevel)
+    def __PyxbDeserialization(self, last_element: bool = None):
+        logging_filename = self.helper.get_property(constants.propertiesloggingfilename)
+        logging_level = self.helper.get_property(constants.propertiesexecutionlogginglevel)
         
         deserializedObject = None
         deserializedBadObject = None
         
-        if (None == loggingfilename):
-            loggingfilename = constants.defaultLogFileName
-        if (None == logginglevel):
-            logginglevel = constants.defaultLoggingLevel
+        if logging_filename is None:
+            logging_filename = constants.defaultLogFileName
+        if logging_level is None:
+            logging_level = constants.defaultLoggingLevel
             
-        logging.basicConfig(filename=loggingfilename, level=logginglevel, format=constants.defaultlogformat)
+        logging.basicConfig(filename=logging_filename, level=logging_level, format=constants.defaultlogformat)
           
         merchantAuth = apicontractsv1.merchantAuthenticationType()
         merchantAuth.name = "unknown"
@@ -52,8 +57,8 @@ class test_CreateTransactionUnitTest(unittest.TestCase):
         createtransactionrequest.transactionRequest = transactionrequest
         createtransactionrequest.refId = "MerchantID-0001"
 
-        logging.debug( "Request: %s " % datetime.datetime.now())
-        logging.debug( "       : %s " % createtransactionrequest )
+        logging.debug("Request: %s " % datetime.datetime.now())
+        logging.debug("       : %s " % createtransactionrequest)
         
         try:    
             xmlRequest = createtransactionrequest.toxml(encoding=constants.xml_encoding, element_name='createTransactionRequest')
@@ -66,7 +71,7 @@ class test_CreateTransactionUnitTest(unittest.TestCase):
         
         badXmlElement = None
         
-        if (lastElement == None):
+        if (last_element == None):
             try:
                 deserializedObject = apicontractsv1.CreateFromDocument(xmlRequest)           
                 self.assertIsNotNone(deserializedObject, "Null deserializedObject ")
@@ -86,7 +91,7 @@ class test_CreateTransactionUnitTest(unittest.TestCase):
             except Exception as ex:
                 logging.error( 'Create Document Exception: %s, %s', type(ex), ex.args )      
         else:
-            if (lastElement == False):       
+            if (last_element == False):
                 try:
                     splitString = "<amount>"
                     lines = xmlRequest.split( splitString)
@@ -97,7 +102,7 @@ class test_CreateTransactionUnitTest(unittest.TestCase):
                 except Exception as ex:
                     ##print ("ElementInMidXML can not be inserted: %s, %s",type(ex), ex.args)
                     logging.debug( "ElementInMidXML can not be inserted: %s, %s" ,type(ex), ex.args)             
-            if (lastElement == True): 
+            if (last_element == True):
                 try:    
                     splitStringAtLast = "</payment>"
                     lines = xmlRequest.split( splitStringAtLast)
@@ -119,12 +124,18 @@ class test_CreateTransactionUnitTest(unittest.TestCase):
             except Exception as ex:
                 logging.error( 'Create Document Exception: %s, %s', type(ex), ex.args )
                 ##print ("Exception while de-serializing bad dom: %s, %s",type(ex), ex.args)
-                
-class test_CustomerProfile(unittest.TestCase):                      
+
+
+class TestCustomerProfile(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.helper = Helper('anet_python_sdk_properties.ini')
+
     def testGetCustomerProfile(self):    
-        loggingfilename = utility.Helper.get_property(constants.propertiesloggingfilename)
-        logginglevel = utility.Helper.get_property(constants.propertiesexecutionlogginglevel)
-        logging.basicConfig(filename=loggingfilename, level=logginglevel, format=constants.defaultlogformat)
+        logging_filename = self.helper.get_property(constants.propertiesloggingfilename)
+        logging_level = self.helper.get_property(constants.propertiesexecutionlogginglevel)
+        logging.basicConfig(filename=logging_filename, level=logging_level, format=constants.defaultlogformat)
           
         merchantAuth = apicontractsv1.merchantAuthenticationType()
         merchantAuth.name = "unknown"
@@ -135,8 +146,8 @@ class test_CustomerProfile(unittest.TestCase):
         getCustomerProfileRequest.customerProfileId = '36152115'   
         getCustomerProfileRequest.abc = 'aaaaaaaa' #extra property not in getCustomerProfileRequest object
         
-        logging.debug( "Request: %s " % datetime.datetime.now())
-        logging.debug( "       : %s " % getCustomerProfileRequest )
+        logging.debug("Request: %s " % datetime.datetime.now())
+        logging.debug("       : %s " % getCustomerProfileRequest)
         
         try:    
             '''serialzing object to XML '''
@@ -211,5 +222,6 @@ class test_CustomerProfile(unittest.TestCase):
             #print("DEseriaziedNEWATLASTObjectXmlRequest is NOT DESerialized")
             logging.error( 'Create Document Exception: %s, %s', type(ex), ex.args )    
 
-if __name__ =='__main__':
+
+if __name__ == '__main__':
     unittest.main()  

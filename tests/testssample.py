@@ -23,7 +23,9 @@ class TestReadProperty(apitestbase.ApiTestBase):
         self.assertIsNotNone(login)
         self.assertIsNotNone(transactionkey)
 
-class test_TransactionReportingUnitTest(apitestbase.ApiTestBase):
+
+class TestTransactionReportingUnitTest(apitestbase.ApiTestBase):
+
     def testchargeCreditCard(self):
         creditCard = apicontractsv1.creditCardType()
         creditCard.cardNumber = "4111111111111111"
@@ -60,8 +62,10 @@ class test_TransactionReportingUnitTest(apitestbase.ApiTestBase):
         if hasattr(response, 'messages') == True:
             if hasattr(response.messages, 'resultCode') == True:
                 self.assertEqual('Ok', response.messages.resultCode)
-     
-class test_RecurringBillingTest(apitestbase.ApiTestBase):
+
+
+class TestRecurringBillingTest(apitestbase.ApiTestBase):
+
     def testCreateSubscription(self):
         createsubscriptionrequest = apicontractsv1.ARBCreateSubscriptionRequest()
         createsubscriptionrequest.merchantAuthentication = self.merchantAuthentication
@@ -70,13 +74,13 @@ class test_RecurringBillingTest(apitestbase.ApiTestBase):
         arbcreatesubscriptioncontroller = ARBCreateSubscriptionController(createsubscriptionrequest)
         arbcreatesubscriptioncontroller.execute()
         response = arbcreatesubscriptioncontroller.getresponse()
-        if hasattr(response, 'messages') == True:
-            if hasattr(response.messages, 'resultCode') == True:
-                self.assertEqual('Ok', response.messages.resultCode)
-        if hasattr(response, 'subscriptionId') == True:
+        createdSubscriptionId = None
+        if hasattr(response, 'messages') and hasattr(response.messages, 'resultCode'):
+            self.assertEqual('Ok', response.messages.resultCode)
+        if hasattr(response, 'subscriptionId'):
             createdSubscriptionId = response.subscriptionId
         return str(createdSubscriptionId)
-       
+
     def testGetSubscription(self):
         getSubscription = apicontractsv1.ARBGetSubscriptionRequest()
         getSubscription.merchantAuthentication = self.merchantAuthentication
@@ -101,29 +105,30 @@ class test_RecurringBillingTest(apitestbase.ApiTestBase):
         if hasattr(response, 'messages') == True:
             if hasattr(response.messages, 'resultCode') == True:
                 self.assertEqual('Ok', response.messages.resultCode)
-   
-class test_paymentTransactionUnitTest(apitestbase.ApiTestBase): 
+
+
+class TestPaymentTransactionUnitTest(apitestbase.ApiTestBase):
+
     def testAuthCaptureTransaction(self):  
-        transactionrequesttype = apicontractsv1.transactionRequestType()
-        transactionrequesttype.transactionType = "authCaptureTransaction"
-        transactionrequesttype.amount = self.amount
-        transactionrequesttype.payment = self.payment
-        transactionrequesttype.order = self.order
-        transactionrequesttype.customer = self.customerData
-        transactionrequesttype.billTo = self.billTo  
-        createtransactionrequest = apicontractsv1.createTransactionRequest()
-        createtransactionrequest.merchantAuthentication = self.merchantAuthentication
-        createtransactionrequest.refId = self.ref_id
-        createtransactionrequest.transactionRequest = transactionrequesttype
-        createtransactioncontroller = createTransactionController(createtransactionrequest)
-        createtransactioncontroller.execute()
-        response = createtransactioncontroller.getresponse()
-        if hasattr(response, 'messages') == True:
-            if hasattr(response.messages, 'resultCode') == True:
-                self.assertEqual('Ok', response.messages.resultCode)
-        if hasattr(response, 'transactionResponse') == True:
+        transaction_request_type = apicontractsv1.transactionRequestType()
+        transaction_request_type.transactionType = "authCaptureTransaction"
+        transaction_request_type.amount = self.amount
+        transaction_request_type.payment = self.payment
+        transaction_request_type.order = self.order
+        transaction_request_type.customer = self.customerData
+        transaction_request_type.billTo = self.billTo
+        create_transaction_request = apicontractsv1.createTransactionRequest()
+        create_transaction_request.merchantAuthentication = self.merchantAuthentication
+        create_transaction_request.refId = self.ref_id
+        create_transaction_request.transactionRequest = transaction_request_type
+        create_transaction_controller = createTransactionController(create_transaction_request)
+        create_transaction_controller.execute()
+        response = create_transaction_controller.getresponse()
+        if hasattr(response, 'messages') and hasattr(response.messages, 'resultCode'):
+            self.assertEqual('Ok', response.messages.resultCode)
+        if hasattr(response, 'transactionResponse'):
             self.assertIsNotNone(response.transactionResponse)
-            if hasattr(response.transactionResponse, 'transId') == True:    
+            if hasattr(response.transactionResponse, 'transId'):
                 self.assertIsNotNone(response.transactionResponse.transId)
                
     def testAuthOnlyContinueTransaction(self):      

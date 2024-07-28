@@ -6,14 +6,14 @@ Created on Nov 1, 2015
 import abc
 import logging
 import pyxb
-import sys
 import xml.dom.minidom
 import requests
 from lxml import objectify
 
 from authorizenet.constants import constants
 from authorizenet import apicontractsv1
-from authorizenet import utility
+from authorizenet.utility import Helper
+
 '''
 from authorizenet.apicontractsv1 import merchantAuthenticationType
 from authorizenet.apicontractsv1 import ANetApiRequest
@@ -24,79 +24,90 @@ anetLogger = logging.getLogger(constants.defaultLoggerName)
 anetLogger.addHandler(logging.NullHandler())
 logging.getLogger('pyxb.binding.content').addHandler(logging.NullHandler())
 
-class APIOperationBaseInterface(object):
-    
-    __metaclass__ = abc.ABCMeta
+
+class APIOperationBaseInterface(abc.ABC):
     
     @abc.abstractmethod
     def execute(self):
-        '''
-        Makes a http-post call. 
+        """
+        Makes a http-post call.
         Uses request xml and response class type to check that the response was of correct type
-        '''
+        """
         pass
 
     @abc.abstractmethod
     def getresponseclass(self):
-        ''' Returns the response class '''
+        """ Returns the response class """
         pass
     
     @abc.abstractmethod
     def getrequesttype(self):
-        ''' Returns the request class '''
+        """ Returns the request class """
         pass
     
     @abc.abstractmethod
     def getresponse(self):
-        ''' Returns the de-serialized response'''
+        """ Returns the de-serialized response """
         pass
-    
+
     @abc.abstractmethod
     def getresultcode(self):
-        ''' Returns the result code from the response '''
+        """ Returns the result code from the response """
         pass
     
     @abc.abstractmethod
     def getmessagetype(self):
-        ''' Returns the message type enum from the response '''
+        """ Returns the message type enum from the response """
         pass
 
     @abc.abstractmethod
     def afterexecute(self):
-        '''Returns the message received from binding after processing request'''
+        """ Returns the message received from binding after processing request """
         pass
 
     @abc.abstractmethod
     def beforeexecute(self):
-        '''TODO'''
+        """ TODO """
         pass
 
-class APIOperationBase(APIOperationBaseInterface):
-    
-    __metaclass__ = abc.ABCMeta 
-    __initialized = False
-    __merchantauthentication = "null"
-    __environment = "null"
-    
-    @staticmethod
-    def __classinitialized():
-        return APIOperationBase.__initialized
-    
+
+class APIOperationBase(APIOperationBaseInterface, abc.ABC):
+
+    merchant_authentication = None
+    endpoint = None
+
+    def __init__(self, api_request):
+        super().__init__()
+        self.helper = Helper('anet_python_sdk_properties.ini')
+        self._httpResponse = None
+        self._request = None
+        self._response = None
+        # objectify variables
+        self._responseXML = None
+        self._reponseObject = None
+        self._mainObject = None
+
+        if api_request is None:
+            raise ValueError('Input request cannot be null')
+
+        self._request = api_request
+        APIOperationBase.endpoint = constants.SANDBOX
+        APIOperationBase.merchant_authentication = apicontractsv1.merchantAuthenticationType()
+        self.validate()
+
     @abc.abstractmethod
     def validaterequest(self):
         return
     
     def validate(self):
-        anetapirequest = self._getrequest()
+        anet_api_request = self._getrequest()
         self.validateandsetmerchantauthentication()       
         self.validaterequest()
-        
-        return
 
-    def setClientId(self): #protected method
+    def setClientId(self):
         self._request.clientId = constants.clientId
 
-    def _getrequest(self): #protected method
+    def _getrequest(self):
         return self._request 
      
     def buildrequest(self):
@@ -117,126 +128,92 @@ class APIOperationBase(APIOperationBaseInterface):
         return requestDom
     
     def execute(self):
-        
-        self.endpoint = APIOperationBase.__environment
-              
         anetLogger.debug('Executing http post to url: %s', self.endpoint)
-        
         self.beforeexecute()
-        
-        proxyDictionary = {'http' : utility.Helper.get_property("http_proxy"),
-                           'https' : utility.Helper.get_property("https_proxy"),
-                           'ftp' : utility.Helper.get_property("ftp")}
-                           
-        #requests is http request  
+        proxy_dictionary = {'http': self.helper.get_property("http_proxy"),
+                            'https': self.helper.get_property("https_proxy"),
+                            'ftp': self.helper.get_property("ftp")}
+
+        # requests is http request
         try:
             self.setClientId()
             xmlRequest = self.buildrequest()
-            self._httpResponse = requests.post(self.endpoint, data=xmlRequest, headers=constants.headers, proxies=proxyDictionary)
+            self._httpResponse = requests.post(self.endpoint, data=xmlRequest, headers=constants.headers, proxies=proxy_dictionary)
         except Exception as httpException:
-            anetLogger.error( 'Error retrieving http response from: %s for request: %s', self.endpoint, self.getprettyxmlrequest())
-            anetLogger.error( 'Exception: %s, %s', type(httpException), httpException.args )
+            anetLogger.error('Error retrieving http response from: %s for request: %s', self.endpoint, self.getprettyxmlrequest())
+            anetLogger.error('Exception: %s, %s', type(httpException), httpException.args)
 
-
-        if self._httpResponse:            
+        if self._httpResponse:
             self._httpResponse.encoding = constants.response_encoding
-            self._httpResponse = self._httpResponse.text[3:] #strip BOM
+            self._httpResponse = self._httpResponse.text[3:]  # strip BOM
             self.afterexecute()
+
             try:
                 self._response = apicontractsv1.CreateFromDocument(self._httpResponse) 
-                #objectify code  
-                xmlResponse= self._response.toxml(encoding=constants.xml_encoding, element_name=self.getrequesttype()) 
+                # objectify code
+                xmlResponse = self._response.toxml(encoding=constants.xml_encoding, element_name=self.getrequesttype())
                 xmlResponse = xmlResponse.replace(constants.nsNamespace1, b'')
                 xmlResponse = xmlResponse.replace(constants.nsNamespace2, b'') 
-                self._mainObject = objectify.fromstring(xmlResponse)   
-                 
+                self._mainObject = objectify.fromstring(xmlResponse)
             except Exception as objectifyexception:
                 anetLogger.error( 'Create Document Exception: %s, %s', type(objectifyexception), objectifyexception.args )
                 responseString = self._httpResponse
-
                 # removing encoding attribute as objectify fails if it is present
                 responseString = responseString.replace('encoding=\"utf-8\"', '')
                 self._mainObject = objectify.fromstring(responseString) 
             else:
-                if type(self.getresponseclass()) != type(self._mainObject):
+                if type(self.getresponseclass()) is not type(self._mainObject):
                     if self._response.messages.resultCode == "Error":
                         anetLogger.debug("Response error")
                     domResponse = xml.dom.minidom.parseString(self._httpResponse.encode('utf-8'))
                     anetLogger.debug('Received response: %s' % domResponse.toprettyxml(encoding='utf-8'))
                 else:
-                    #Need to handle ErrorResponse  
+                    # Need to handle ErrorResponse
                     anetLogger.debug('Error retrieving response for request: %s' % self._request)
         else:
             anetLogger.debug("Did not receive http response")
-        return
-    
+
     def getresponse(self):
-        #return self._response #pyxb object
-        return self._mainObject #objectify object
+        # return self._response  # pyxb object
+        return self._mainObject  # objectify object
     
     def getresultcode(self):
-        resultcode = 'null'
+        resultcode = None
         if self._response:
             resultcode = self._response.resultCode
         return resultcode
     
     def getmessagetype(self):
-        message = 'null'
+        message = None
         if self._response:
             message = self._response.message
         return message
     
-    def afterexecute(self ):
-        return 
+    def afterexecute(self):
+        pass
     
     def beforeexecute(self):
-        return 
-    
-    @staticmethod
+        pass
+
     def getmerchantauthentication(self):
-        return self.__merchantauthentication
+        return self.merchant_authentication
     
     @staticmethod
-    def setmerchantauthentication(merchantauthentication):
-        APIOperationBase.__merchantauthentication = merchantauthentication
-        return
-    
+    def setmerchantauthentication(merchant_authentication):
+        APIOperationBase.merchant_authentication = merchant_authentication
+
     def validateandsetmerchantauthentication(self):
         anetapirequest = apicontractsv1.ANetApiRequest()
-        if (anetapirequest.merchantAuthentication == "null"):
-            if (self.getmerchantauthentication() != "null"):
-                anetapirequest.merchantAuthentication = self.getmerchantauthentication()
-            else:
-                raise ValueError('Merchant Authentication can not be null')
-        return
-    
+        if anetapirequest.merchantAuthentication is None and self.getmerchantauthentication() is not None:
+            anetapirequest.merchantAuthentication = self.getmerchantauthentication()
+        else:
+            raise ValueError('Merchant Authentication can not be None')
+
     @staticmethod
-    def getenvironment(self):
-        return APIOperationBase.__environment
-        
-    
+    def getenvironment():
+        return APIOperationBase.endpoint
+
     @staticmethod
     def setenvironment(userenvironment):
-        APIOperationBase.__environment = userenvironment 
-        return 
-    
-    def __init__(self, apiRequest):
-        self._httpResponse = None
-        self._request = None
-        self._response = None
-        #objectify variables 
-        self._responseXML = None
-        self._reponseObject = None
-        self._mainObject = None
-               
-        if None == apiRequest:
-            raise ValueError('Input request cannot be null')
-         
-        self._request = apiRequest
-        __merchantauthentication = apicontractsv1.merchantAuthenticationType()
-        APIOperationBase.__environment = constants.SANDBOX
-        
-        APIOperationBase.setmerchantauthentication(__merchantauthentication)
-        self.validate()
-            
+        APIOperationBase.endpoint = userenvironment
         return

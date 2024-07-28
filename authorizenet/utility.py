@@ -40,7 +40,7 @@ class Helper:
 
         if self.parser is not None:
             try:
-                files_successfully_read_in = self.parser.read(self.property_filename)
+                files_successfully_read_in = self.parser.read(self.property_file_uri)
                 logger.debug(f'config files successfully read in: {files_successfully_read_in}')
             except ConfigParserError:
                 logger.warning("Unable to load the property file")
