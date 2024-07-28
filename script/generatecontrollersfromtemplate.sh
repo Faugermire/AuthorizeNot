@@ -9,7 +9,7 @@ echo Starting ${dt}
 
 CDIR=`pwd`
 SRCDIR=${CDIR}
-GENFOLDER=authorizenet/apicontractsv1.py
+GENFOLDER=authorizenot/apicontractsv1.py
 CONTROLLERFOLDER=controllerstemporary
 
 SRCLOG=${CDIR}/log/TestSources
@@ -53,11 +53,11 @@ do
     perl -pi -w -e "s/APICONTROLLERNAME/$cntrls/g;" ${SRCDIR}/${CONTROLLERFOLDER}/${cntrls}Controller.py
 done
 
-cat ${SRCDIR}/script/headertemplate.pyt ${SRCDIR}/${CONTROLLERFOLDER}/*.py  > ${SRCDIR}/authorizenet/apicontrollers.new
+cat ${SRCDIR}/script/headertemplate.pyt ${SRCDIR}/${CONTROLLERFOLDER}/*.py  > ${SRCDIR}/authorizenot/apicontrollers.new
 
-sed -i 's/getTransactionListForCustomerResponse/getTransactionListResponse/g' ${SRCDIR}/authorizenet/apicontrollers.new
+sed -i 's/getTransactionListForCustomerResponse/getTransactionListResponse/g' ${SRCDIR}/authorizenot/apicontrollers.new
 
-echo Controllers generated in module: ${SRCDIR}/authorizenet/apicontrollers.py
+echo Controllers generated in module: ${SRCDIR}/authorizenot/apicontrollers.py
 
 echo Finished ${dt}
 

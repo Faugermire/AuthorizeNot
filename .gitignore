@@ -163,3 +163,4 @@ cython_debug/
 
 ############## CUSTOM IGNORES #################
 anet_python_sdk_properties.ini
+controllerstemporary/

@@ -19,7 +19,7 @@ IF "0"=="%ERRORLEVEL%" (
     EXIT /b 1
 )
 SET XSDPATH=https://apitest.authorize.net/xml/v1/schema/AnetApiSchema.xsd
-SET CONTRACTSDIR=authorizenet
+SET CONTRACTSDIR=authorizenot
 SET CONTRACTSFILE=apicontractsv1
 SET /p PYXBGENPATH=< %TEMP%\pyxbgenpath.txt
 SET TEMPFILE=binding
@@ -38,7 +38,7 @@ IF "0"=="%ERRORLEVEL%" (
         DEL "%CONTRACTSDIR%\%CONTRACTSFILE%.py" > NUL
     )
     MOVE "%TEMPFILE%.py" "%CONTRACTSDIR%\%CONTRACTSFILE%.py" > NUL
-    @ECHO Bindings have been successfully generated from XSD in the file authorizenet\%CONTRACTSFILE%.py
+    @ECHO Bindings have been successfully generated from XSD in the file authorizenot\%CONTRACTSFILE%.py
     @ECHO Old contracts have been moved to .old
 ) ELSE (
     @ECHO Found python
